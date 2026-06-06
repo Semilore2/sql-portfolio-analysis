@@ -14,8 +14,7 @@ WHERE DATE(block_timestamp)
 BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
 AND CURRENT_DATE()
 GROUP BY transaction_day
-ORDER BY transaction_day
-LIMIT 10;
+ORDER BY transaction_day;
 
 --2. Whale Wallet Tier Segmentation
 SELECT
@@ -33,8 +32,7 @@ FROM `bigquery-public-data.crypto_ethereum.transactions`
 WHERE from_address IS NOT NULL
 GROUP BY from_address
 HAVING total_eth > 0
-ORDER BY total_eth DESC
-LIMIT 10;
+ORDER BY total_eth DESC;
 
 --3. Daily Top-Value Transfers
 WITH ranked_transactions AS(
@@ -60,8 +58,7 @@ eth_value,
 transaction_rank
 FROM ranked_transactions
 WHERE transaction_rank <= 5
-ORDER BY transaction_day, transaction_rank
-LIMIT 10;
+ORDER BY transaction_day, transaction_rank;
 
 --4. Rolling Cost Forecast
 WITH daily_gas AS(
@@ -78,5 +75,4 @@ AVG(avg_gas_price_gwei) OVER(
   ORDER BY daily_gas.transaction_day ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
 ) AS moving_avg_7days
 FROM daily_gas
-ORDER BY transaction_day
-LIMIT 10;
+ORDER BY transaction_day;
