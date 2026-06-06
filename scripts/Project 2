@@ -18,8 +18,7 @@ FROM `bigquery-public-data.medicare.inpatient_charges_2014`
 GROUP BY
 provider_name,
 provider_state
-ORDER BY markup_ratio DESC
-LIMIT 10;
+ORDER BY markup_ratio DESC;
 
 -- 2.Geographic Price Variance
 WITH top_procedure AS(
@@ -29,7 +28,6 @@ WITH top_procedure AS(
   FROM `bigquery-public-data.medicare.inpatient_charges_2014`
   GROUP BY drg_definition
   ORDER BY procedure_count DESC
-  LIMIT 10
 ),
 state_payments AS(
   SELECT
@@ -54,8 +52,7 @@ DENSE_RANK() OVER(
 FROM state_payments
 ORDER BY
 drg_definition,
-state_cost_rank
-LIMIT 10;
+state_cost_rank;
 
 -- 3. Statistical Outlier Detection
 WITH provider_stats AS (
@@ -78,8 +75,7 @@ national_stddev
 FROM provider_stats
 WHERE average_covered_charges > (national_avg + (2 * national_stddev))
 OR average_covered_charges < (national_avg - (2 * national_stddev))
-ORDER BY average_covered_charges DESC
-LIMIT 10;
+ORDER BY average_covered_charges DESC;
 
 --4. Cross-Domain Analysis
 WITH hospital_costs AS (
@@ -103,5 +99,4 @@ p.avg_drug_cost
 FROM hospital_costs AS h 
 INNER JOIN prescriber_costs AS p
 ON h.provider_state = p.nppes_provider_state
-ORDER BY h.avg_hospital_payment DESC
-LIMIT 10;
+ORDER BY h.avg_hospital_payment DESC;
